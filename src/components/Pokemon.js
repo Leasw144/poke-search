@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, FlatList, StyleSteet } from 'react-native';
+import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 
 const Pokemon = ({ name, pic, types, desc }) => {
   if(!name) {
