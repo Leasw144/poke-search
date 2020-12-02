@@ -66,6 +66,44 @@ export default class Main extends Component {
     );
   }
 
+  searchPokemon = async () => {
+    try {
+      const pokemonID = pokemon.getId(this.state.searchInput); // check if the entered Pokémon name is valid
+
+      this.setState({
+        isLoading: true, // show the loader while request is being performed
+      });
+
+      const { data: pokemonData } = await axios.get(
+        `${POKE_API_BASE_URL}/pokemon/${pokemonID}`
+      );
+      const { data: pokemonSpecieData } = await axios.get(
+        `${POKE_API_BASE_URL}/pokemon-species/${pokemonID}`
+      );
+
+      const { name, sprites, types } = pokemonData;
+      const { flavor_text_entries } = pokemonSpecieData;
+
+      this.setState({
+        name,
+        pic: sprites.front_default,
+        types: this.getTypes(types),
+        desc: this.getDescription(flavor_text_entries),
+        isLoading: false, // hide loader
+      });
+    } catch (err) {
+      Alert.alert('Error', 'Pokémon not found');
+    }
+  };
+
+  getTypes = (types) =>
+    types.map(({ slot, type }) => ({
+      id: slot,
+      name: type.name,
+    }));
+
+  getDescription = (entries) =>
+    entries.find((item) => item.language.name === 'en').flavor_text;
 }
 
 const styles = StyleSheet.create({
